@@ -17,11 +17,11 @@ Plugin update URI: http://www.osclass.org/files/plugins/google_maps/update.php
 
     // HELPER
     function osc_google_maps_header() {
-        echo '<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>';
+        echo '<script src="http://maps.google.com/maps/api/js?sensor=false&key='.osc_get_preference('maps_key', 'google_maps').'" type="text/javascript"></script>';
         echo '<style>#itemMap img { max-width: 140em; } </style>';
     }
 
-function insert_geo_location($item) {
+    function insert_geo_location($item) {
         $itemId = $item['pk_i_id'];
         $aItem = Item::newInstance()->findByPrimaryKey($itemId);
         $sAddress = (isset($aItem['s_address']) ? $aItem['s_address'] : '');
@@ -43,9 +43,26 @@ function insert_geo_location($item) {
         }
     }
 
-    osc_add_hook('location', 'google_maps_location');
+    osc_add_hook('init',function() {
+        if (osc_get_preference('include_maps_js', 'google_maps') != '0') {
+            osc_add_hook('location', 'google_maps_location');
+        }
+    } );
 
     osc_add_hook('posted_item', 'insert_geo_location');
     osc_add_hook('edited_item', 'insert_geo_location');
 
-?>
+    osc_add_route('google_maps_settings', 'google_maps_settings', 'google_maps_settings', 'google_maps/admin/settings.php');
+    osc_add_hook('admin_menu_init', function() {
+        osc_add_admin_submenu_divider('plugins', 'Google Maps Plugin', 'google_maps_divider', 'administrator');
+        osc_add_admin_submenu_page('plugins', __('Settings', 'google_maps'), osc_route_admin_url('google_maps_settings'), 'google_maps_setting', 'administrator');
+    });
+
+    osc_add_hook('admin_header',  function() {
+        osc_remove_hook('admin_page_header', 'customPageHeader');
+    });
+    osc_add_hook('admin_page_header',  function() {
+    ?>
+    <h1><?php _e('Google Maps Plugin', 'google_maps'); ?></h1>
+    <?php
+    } );
