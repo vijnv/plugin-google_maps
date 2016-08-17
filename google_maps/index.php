@@ -17,7 +17,7 @@ Plugin update URI: http://www.osclass.org/files/plugins/google_maps/update.php
 
     // HELPER
     function osc_google_maps_header() {
-        echo '<script src="http://maps.google.com/maps/api/js?sensor=false&key='.osc_get_preference('maps_key', 'google_maps').'" type="text/javascript"></script>';
+        echo '<script src="https://maps.google.com/maps/api/js?sensor=false&key='.osc_get_preference('maps_key', 'google_maps').'" type="text/javascript"></script>';
         echo '<style>#itemMap img { max-width: 140em; } </style>';
     }
 
@@ -58,11 +58,14 @@ Plugin update URI: http://www.osclass.org/files/plugins/google_maps/update.php
         osc_add_admin_submenu_page('plugins', __('Settings', 'google_maps'), osc_route_admin_url('google_maps_settings'), 'google_maps_setting', 'administrator');
     });
 
+
     osc_add_hook('admin_header',  function() {
-        osc_remove_hook('admin_page_header', 'customPageHeader');
+        if(Params::getParam('route')=='google_maps_settings') osc_remove_hook('admin_page_header', 'customPageHeader');
     });
     osc_add_hook('admin_page_header',  function() {
-    ?>
-    <h1><?php _e('Google Maps Plugin', 'google_maps'); ?></h1>
-    <?php
-    } );
+        if (Params::getParam('route') == 'google_maps_settings') {
+            ?>
+            <h1><?php _e('Google Maps Plugin', 'google_maps'); ?></h1>
+            <?php
+        }
+    });
