@@ -29,9 +29,11 @@ function google_maps_location() {
     require 'map.php';
 }
 
-function insert_geo_location($item) {
+function insert_geo_location($item, $location = null) {
     $itemId = $item['pk_i_id'];
-    $location = google_maps_fetch_geo($item);
+    if ($location == null) {
+        $location = google_maps_fetch_geo($item);
+    }
 
     if ($location !== false) {    
         ItemLocation::newInstance()->update (array('d_coord_lat' => $location->lat,
