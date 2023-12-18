@@ -13,6 +13,7 @@ if($item['d_coord_lat'] == '' || $item['d_coord_lat'] == null || $item['d_coord_
     if ($location !== false) {
         $item['d_coord_lat'] = $location->lat;
         $item['d_coord_long'] = $location->lng;
+        insert_geo_location($item, $location);
     }
 }
 
